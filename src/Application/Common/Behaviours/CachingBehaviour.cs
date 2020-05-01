@@ -62,7 +62,7 @@ namespace CleanArchitecture.Application.Common.Behaviours
 
             if (needCachingForQuery)
             {
-                var options = new CacheOptions();
+                var options = ((ICache)request).SetCacheOptions();
 
                 var cacheKey = CacheHelper.GenerateCacheKeyFromRequest(request);
 
