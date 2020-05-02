@@ -12,93 +12,116 @@ using System.Threading.Tasks;
 
 namespace CleanArchitecture.Application.UnitTests.Common.Behaviours
 {
-    public class TestQueries
+    public class GetCachedQuery : IRequest<TodosVm>, ICache
     {
-        public class GetCachedQuery : IRequest<TodosVm>, ICache
-        {
 
-            public CacheOptions SetCacheOptions() => new CacheOptions
+        public CacheOptions SetCacheOptions() => new CacheOptions
+        {
+            CacheKey = $"CustomKey",
+            ExpirationRelativeToNow = TimeSpan.FromMilliseconds(30000)
+        };
+    }
+
+    public class GetCachedQueryHandler : IRequestHandler<GetTodosQuery, TodosVm>
+    {
+        private readonly IApplicationDbContext _context;
+        private readonly IMapper _mapper;
+
+        public GetCachedQueryHandler(IApplicationDbContext context, IMapper mapper)
+        {
+            _context = context;
+            _mapper = mapper;
+        }
+
+        public async Task<TodosVm> Handle(GetTodosQuery request, CancellationToken cancellationToken)
+        {
+            return new TodosVm
             {
-                CacheKey = $"CustomKey",
-                ExpirationRelativeToNow = TimeSpan.FromMilliseconds(30000)
+
+                Lists = new List<TodoListDto>()
             };
         }
+    }
 
-        public class GetCachedQueryHandler : IRequestHandler<GetTodosQuery, TodosVm>
+    public class GetCachedWithParametersQuery : IRequest<TodosVm>, ICache
+    {
+        public int Id { get; set; }
+    }
+
+    public class GetCachedWithParametersQueryHandler : IRequestHandler<GetTodosQuery, TodosVm>
+    {
+        private readonly IApplicationDbContext _context;
+        private readonly IMapper _mapper;
+
+        public GetCachedWithParametersQueryHandler(IApplicationDbContext context, IMapper mapper)
         {
-            private readonly IApplicationDbContext _context;
-            private readonly IMapper _mapper;
-
-            public GetCachedQueryHandler(IApplicationDbContext context, IMapper mapper)
-            {
-                _context = context;
-                _mapper = mapper;
-            }
-
-            public async Task<TodosVm> Handle(GetTodosQuery request, CancellationToken cancellationToken)
-            {
-                return new TodosVm
-                {
-                    
-                    Lists = new List<TodoListDto>()
-                };
-            }
+            _context = context;
+            _mapper = mapper;
         }
 
-        public class GetCachedNoCacheOptionsQuery : IRequest<TodosVm>, ICache
+        public async Task<TodosVm> Handle(GetTodosQuery request, CancellationToken cancellationToken)
         {
-        }
-
-        public class GetCachedNoCacheOptionsQueryHandler : IRequestHandler<GetTodosQuery, TodosVm>
-        {
-            private readonly IApplicationDbContext _context;
-            private readonly IMapper _mapper;
-
-            public GetCachedNoCacheOptionsQueryHandler(IApplicationDbContext context, IMapper mapper)
+            return new TodosVm
             {
-                _context = context;
-                _mapper = mapper;
-            }
 
-            public async Task<TodosVm> Handle(GetTodosQuery request, CancellationToken cancellationToken)
-            {
-                return new TodosVm
-                {
-
-                    Lists = new List<TodoListDto>()
-                };
-            }
-        }
-
-        public class GetNonCachedQuery : IRequest<TodosVm>
-        {
-
-            public CacheOptions SetCacheOptions() => new CacheOptions
-            {
-                CacheKey = $"CustomKey",
-                ExpirationRelativeToNow = TimeSpan.FromMilliseconds(60000)
+                Lists = new List<TodoListDto>()
             };
         }
+    }
 
-        public class GetNonCachedQueryHandler : IRequestHandler<GetTodosQuery, TodosVm>
+    public class GetCachedNoCacheOptionsQuery : IRequest<TodosVm>, ICache
+    {
+    }
+
+    public class GetCachedNoCacheOptionsQueryHandler : IRequestHandler<GetTodosQuery, TodosVm>
+    {
+        private readonly IApplicationDbContext _context;
+        private readonly IMapper _mapper;
+
+        public GetCachedNoCacheOptionsQueryHandler(IApplicationDbContext context, IMapper mapper)
         {
-            private readonly IApplicationDbContext _context;
-            private readonly IMapper _mapper;
+            _context = context;
+            _mapper = mapper;
+        }
 
-            public GetNonCachedQueryHandler(IApplicationDbContext context, IMapper mapper)
+        public async Task<TodosVm> Handle(GetTodosQuery request, CancellationToken cancellationToken)
+        {
+            return new TodosVm
             {
-                _context = context;
-                _mapper = mapper;
-            }
 
-            public async Task<TodosVm> Handle(GetTodosQuery request, CancellationToken cancellationToken)
+                Lists = new List<TodoListDto>()
+            };
+        }
+    }
+
+    public class GetNonCachedQuery : IRequest<TodosVm>
+    {
+
+        public CacheOptions SetCacheOptions() => new CacheOptions
+        {
+            CacheKey = $"CustomKey",
+            ExpirationRelativeToNow = TimeSpan.FromMilliseconds(60000)
+        };
+    }
+
+    public class GetNonCachedQueryHandler : IRequestHandler<GetTodosQuery, TodosVm>
+    {
+        private readonly IApplicationDbContext _context;
+        private readonly IMapper _mapper;
+
+        public GetNonCachedQueryHandler(IApplicationDbContext context, IMapper mapper)
+        {
+            _context = context;
+            _mapper = mapper;
+        }
+
+        public async Task<TodosVm> Handle(GetTodosQuery request, CancellationToken cancellationToken)
+        {
+            return new TodosVm
             {
-                return new TodosVm
-                {
 
-                    Lists = new List<TodoListDto>()
-                };
-            }
+                Lists = new List<TodoListDto>()
+            };
         }
     }
 }

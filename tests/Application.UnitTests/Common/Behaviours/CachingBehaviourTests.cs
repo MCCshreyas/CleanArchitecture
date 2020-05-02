@@ -6,11 +6,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using static CleanArchitecture.Application.UnitTests.Common.Behaviours.TestQueries;
 
 namespace CleanArchitecture.Application.UnitTests.Common.Behaviours
 {
@@ -25,7 +21,7 @@ namespace CleanArchitecture.Application.UnitTests.Common.Behaviours
         }
 
         [Test]
-        public async Task ShouldCallGetCacheValueAsyncIfRequestInheritsIsICache()
+        public async Task ShouldCallGetCacheValueAsyncWhenRequestInheritsIsICache()
         {
             var logger = Mock.Of<ILogger<CachingBehaviour<GetCachedQuery, TodosVm>>>();
             var cachingBehaviour = new CachingBehaviour<GetCachedQuery, TodosVm>(cacheService.Object, logger);
@@ -40,7 +36,7 @@ namespace CleanArchitecture.Application.UnitTests.Common.Behaviours
 
 
         [Test]
-        public async Task ShouldNotCallGetCacheValueAsyncIfRequestDoesNotInheritsIsICache()
+        public async Task ShouldNotCallGetCacheValueAsyncWhenRequestDoesNotInheritsIsICache()
         {
             var logger = Mock.Of<ILogger<CachingBehaviour<GetNonCachedQuery, TodosVm>>>();
             var cachingBehaviour = new CachingBehaviour<GetNonCachedQuery, TodosVm>(cacheService.Object, logger);
@@ -53,7 +49,7 @@ namespace CleanArchitecture.Application.UnitTests.Common.Behaviours
         }
 
         [Test]
-        public async Task ShouldNotCallSetCacheValueAsyncIfObjectInCache()
+        public async Task ShouldNotCallSetCacheValueAsyncWhenObjectInCache()
         {
             var logger = Mock.Of<ILogger<CachingBehaviour<GetCachedQuery, TodosVm>>>();
             var cachingBehaviour = new CachingBehaviour<GetCachedQuery, TodosVm>(cacheService.Object, logger);
@@ -72,7 +68,7 @@ namespace CleanArchitecture.Application.UnitTests.Common.Behaviours
         }
 
         [Test]
-        public async Task ShouldCallSetCacheValueAsyncIfObjectNotInCache()
+        public async Task ShouldCallSetCacheValueAsyncWhenObjectNotInCache()
         {
             var logger = Mock.Of<ILogger<CachingBehaviour<GetCachedQuery, TodosVm>>>();
             var cachingBehaviour = new CachingBehaviour<GetCachedQuery, TodosVm>(cacheService.Object, logger);
@@ -93,7 +89,7 @@ namespace CleanArchitecture.Application.UnitTests.Common.Behaviours
         }
 
         [Test]
-        public async Task ShouldCallSetCacheValueAsyncWithDefaultValuesIfCachingOptionsIsNotSet()
+        public async Task ShouldCallSetCacheValueAsyncWithDefaultValuesWhenCachingOptionsIsNotSet()
         {
             var logger = Mock.Of<ILogger<CachingBehaviour<GetCachedNoCacheOptionsQuery, TodosVm>>>();
             var cachingBehaviour = new CachingBehaviour<GetCachedNoCacheOptionsQuery, TodosVm>(cacheService.Object, logger);
@@ -111,8 +107,9 @@ namespace CleanArchitecture.Application.UnitTests.Common.Behaviours
 
             await cachingBehaviour.Handle(request, new System.Threading.CancellationToken(), requestHandlerDelegate.Object);
 
-
             cacheService.Verify(c => c.SetCacheValueAsync(cacheKey, toBeCached, TimeSpan.FromMilliseconds(60000)), Times.Once);
         }
+
+
     }
 }
