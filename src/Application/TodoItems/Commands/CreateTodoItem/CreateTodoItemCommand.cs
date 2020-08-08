@@ -1,4 +1,5 @@
 ﻿using CleanArchitecture.Application.Common.Interfaces;
+using CleanArchitecture.Application.TodoItems.Events;
 using CleanArchitecture.Domain.Entities;
 using MediatR;
 using System.Threading;
@@ -32,6 +33,8 @@ namespace CleanArchitecture.Application.TodoItems.Commands.CreateTodoItem
             };
 
             _context.TodoItems.Add(entity);
+
+            entity.DomainEventStore.Add(new TodoItemCreatedEvent(entity));
 
             await _context.SaveChangesAsync(cancellationToken);
 

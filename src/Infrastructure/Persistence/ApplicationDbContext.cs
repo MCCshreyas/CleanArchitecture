@@ -1,12 +1,14 @@
 ﻿using CleanArchitecture.Application.Common.Interfaces;
 using CleanArchitecture.Domain.Common;
 using CleanArchitecture.Domain.Entities;
+using CleanArchitecture.Domain.Interfaces;
 using CleanArchitecture.Infrastructure.Identity;
 using IdentityServer4.EntityFramework.Options;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Options;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,7 +34,7 @@ namespace CleanArchitecture.Infrastructure.Persistence
 
         public DbSet<TodoItem> TodoItems { get; set; }
 
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
             foreach (var entry in ChangeTracker.Entries<AuditableEntity>())
             {
@@ -49,7 +51,21 @@ namespace CleanArchitecture.Infrastructure.Persistence
                 }
             }
 
-            return base.SaveChangesAsync(cancellationToken);
+            await FireDomainEventsIfAnyAsync();
+
+            return await base.SaveChangesAsync(cancellationToken);
+        }
+
+        private async Task FireDomainEventsIfAnyAsync()
+        {
+            var domainEventEntities = ChangeTracker.Entries<IHasDomainEvent>()
+                                    .Select(x => x.Entity.DomainEventStore)
+                                    .SelectMany(x => x)
+                                    .ToArray();
+            foreach (var @event in domainEventEntities)
+            {
+                await @event.HandleAsync();
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder builder)

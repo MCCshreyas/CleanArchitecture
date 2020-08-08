@@ -8,6 +8,10 @@ namespace CleanArchitecture.Infrastructure.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<TodoItem> builder)
         {
+            // Ignore domain event store field
+            // as we dont want this on db side
+            builder.Ignore(x => x.DomainEventStore);
+
             builder.Property(t => t.Title)
                 .HasMaxLength(200)
                 .IsRequired();
