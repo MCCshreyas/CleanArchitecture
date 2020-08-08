@@ -38,6 +38,7 @@ namespace CleanArchitecture.Domain.Entities
 
         public List<IEvent> DomainEventStore { get; set; }
 
+        public TodoList List { get; set; }
         public TodoItem()
         {
             DomainEventStore = new List<IEvent>();
