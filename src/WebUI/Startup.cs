@@ -32,7 +32,7 @@ namespace CleanArchitecture.WebUI
             services.AddApplication();
             services.AddInfrastructure(Configuration);
 
-            services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddSingleton<ICurrentUserService, CurrentUserService>();
 
             services.AddHttpContextAccessor();
 
@@ -40,7 +40,7 @@ namespace CleanArchitecture.WebUI
                 .AddDbContextCheck<ApplicationDbContext>();
 
             services.AddControllersWithViews(options => 
-                options.Filters.Add(new ApiExceptionFilter()));
+                options.Filters.Add(new ApiExceptionFilterAttribute()));
 
             services.AddRazorPages();
 
