@@ -3,6 +3,7 @@ using CleanArchitecture.Domain.Entities;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
+using CleanArchitecture.Application.TodoItems.Events;
 
 namespace CleanArchitecture.Application.TodoItems.Commands.CreateTodoItem
 {
@@ -30,7 +31,9 @@ namespace CleanArchitecture.Application.TodoItems.Commands.CreateTodoItem
                 Title = request.Title,
                 Done = false
             };
-
+            
+            entity.DomainEvents.Add(new TodoItemCreatedEvent(entity));
+            
             _context.TodoItems.Add(entity);
 
             await _context.SaveChangesAsync(cancellationToken);

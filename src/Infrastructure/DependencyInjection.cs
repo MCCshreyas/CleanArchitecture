@@ -1,4 +1,5 @@
 ﻿using CleanArchitecture.Application.Common.Interfaces;
+using CleanArchitecture.Infrastructure.EventPublisher;
 using CleanArchitecture.Infrastructure.Files;
 using CleanArchitecture.Infrastructure.Identity;
 using CleanArchitecture.Infrastructure.Persistence;
@@ -41,6 +42,8 @@ namespace CleanArchitecture.Infrastructure
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();
+
+            services.AddScoped<IDomainEventPublisher, DomainEventPublisher>();
 
             return services;
         }

@@ -8,6 +8,10 @@ namespace CleanArchitecture.Infrastructure.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<TodoItem> builder)
         {
+            // ignore the DomainEvents as we
+            // want them to persist in DB
+            builder.Ignore(x => x.DomainEvents);
+            
             builder.Property(t => t.Title)
                 .HasMaxLength(200)
                 .IsRequired();
